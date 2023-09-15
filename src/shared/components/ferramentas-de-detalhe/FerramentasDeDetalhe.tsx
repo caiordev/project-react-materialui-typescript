@@ -17,13 +17,13 @@ interface IFerramentasDeDetalhe {
   mostrarBotaoVoltar?: boolean;
   mostrarBotaoApagar?: boolean;
   mostrarBotaoSalvar?: boolean;
-  mostrarBotaoSalvarEFechar?: boolean;
+  mostrarBotaoSalvarEVoltar?: boolean;
 
   mostrarBotaoSalvarCarregando?: boolean;
   mostrarBotaoNovoCarregando?: boolean;
   mostrarBotaoVoltarCarregando?: boolean;
   mostrarBotaoApagarCarregando?: boolean;
-  mostrarBotaoSalvarEFecharCarregando?: boolean;
+  mostrarBotaoSalvarEVoltarCarregando?: boolean;
 
   aoClicarEmNovo?: () => void;
   aoClicarEmVoltar?: () => void;
@@ -38,7 +38,7 @@ export const FerramentasDeDetalhe: React.FC<IFerramentasDeDetalhe> = ({
   mostrarBotaoApagar = true,
   mostrarBotaoNovo = true,
   mostrarBotaoSalvar = true,
-  mostrarBotaoSalvarEFechar = false,
+  mostrarBotaoSalvarEVoltar = false,
   mostrarBotaoVoltar = true,
 
   aoClicarEmApagar,
@@ -50,7 +50,7 @@ export const FerramentasDeDetalhe: React.FC<IFerramentasDeDetalhe> = ({
   mostrarBotaoApagarCarregando = false,
   mostrarBotaoNovoCarregando = false,
   mostrarBotaoSalvarCarregando = false,
-  mostrarBotaoSalvarEFecharCarregando = false,
+  mostrarBotaoSalvarEVoltarCarregando = false,
   mostrarBotaoVoltarCarregando = false,
 }) => {
   //smDown e mdDown trás valores booleanos
@@ -111,8 +111,8 @@ export const FerramentasDeDetalhe: React.FC<IFerramentasDeDetalhe> = ({
         <Skeleton width={110} height={61} />
       )}
 
-      {mostrarBotaoSalvarEFechar &&
-        !mostrarBotaoSalvarEFecharCarregando &&
+      {mostrarBotaoSalvarEVoltar &&
+        !mostrarBotaoSalvarEVoltarCarregando &&
         !smDown &&
         !mdDown && (
           <Button
@@ -133,7 +133,7 @@ export const FerramentasDeDetalhe: React.FC<IFerramentasDeDetalhe> = ({
           </Button>
         )}
 
-      {mostrarBotaoSalvarEFecharCarregando && !smDown && !mdDown && (
+      {mostrarBotaoSalvarEVoltarCarregando && !smDown && !mdDown && (
         <Skeleton width={180} height={60} />
       )}
 
@@ -161,7 +161,7 @@ export const FerramentasDeDetalhe: React.FC<IFerramentasDeDetalhe> = ({
         (mostrarBotaoNovo ||
           mostrarBotaoApagar ||
           mostrarBotaoSalvar ||
-          mostrarBotaoSalvarEFechar) && (
+          mostrarBotaoSalvarEVoltar) && (
           <Divider variant="middle" orientation="vertical" />
         )}
 
