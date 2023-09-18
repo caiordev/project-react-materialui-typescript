@@ -1,12 +1,6 @@
 {
   "pessoas": [
     {
-      "id": 3,
-      "nomeCompleto": "Danilo da silva",
-      "email": "Danilo@gmail.com",
-      "cidadeId": 1
-    },
-    {
       "id": 4,
       "nomeCompleto": "Lucas da silva",
       "email": "Lucas@gmail.com",
@@ -47,6 +41,12 @@
       "nomeCompleto": "Maria da silva",
       "email": "Maria@gmail.com",
       "cidadeId": 1
+    },
+    {
+      "nomeCompleto": "caio reis",
+      "email": "caio@gmail.com",
+      "cidadeId": "1",
+      "id": 11
     }
   ]
 }
