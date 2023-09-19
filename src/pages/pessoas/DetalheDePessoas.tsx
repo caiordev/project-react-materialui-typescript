@@ -1,13 +1,14 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-restricted-globals */
 import { Box, Grid, LinearProgress, Paper, Typography } from "@mui/material";
-import { FormHandles } from "@unform/core";
-import { Form } from "@unform/web";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { FerramentasDeDetalhe } from "../../shared/components";
-import { VTextField } from "../../shared/forms";
+import { VTextField, VForm, useVForm } from "../../shared/forms";
 import { LayoutBaseDePagina } from "../../shared/layouts";
 import { PessoasService } from "../../shared/services/api/pessoas/PessoasService";
+import * as yup from "yup";
+import { number, object, ObjectSchema, string } from "yup";
 
 interface IFormData {
   email: string;
@@ -15,11 +16,19 @@ interface IFormData {
   nomeCompleto: string;
 }
 
+const formValidationSchema: ObjectSchema<IFormData> = object({
+  nomeCompleto: string()
+    .required("Campo é obrigatório.")
+    .min(3, "O campo precisa ter no minimo 3 caracteres."),
+  email: string().required().email(),
+  cidadeId: number().required(),
+});
+
 export const DetalheDePessoas: React.FC = () => {
   const { id = "nova" } = useParams<"id">();
   const navigate = useNavigate();
 
-  const formRef = useRef<FormHandles>(null);
+  const { formRef, save, saveAndClose, isSaveAndClose } = useVForm();
 
   const [isLoading, setIsLoading] = useState(false);
   const [nome, setNome] = useState("");
@@ -40,30 +49,59 @@ export const DetalheDePessoas: React.FC = () => {
           formRef.current?.setData(result);
         }
       });
+    } else {
+      formRef.current?.setData({
+        nomeCompleto: "",
+        email: "",
+        cidadeId: "",
+      });
     }
   }, [id]);
 
   const handleSave = (dados: IFormData) => {
-    setIsLoading(true);
-    if (id === "nova") {
-      PessoasService.create(dados).then((result) => {
-        setIsLoading(false);
-        if (result instanceof Error) {
-          alert(result.message);
+    formValidationSchema
+      .validate(dados, { abortEarly: false })
+      .then((dadosValidados) => {
+        setIsLoading(true);
+
+        if (id === "nova") {
+          PessoasService.create(dadosValidados).then((result) => {
+            setIsLoading(false);
+            if (result instanceof Error) {
+              alert(result.message);
+            } else {
+              if (isSaveAndClose()) {
+                navigate("/pessoas");
+              } else {
+                navigate(`/pessoas/detalhe/${result}`);
+              }
+            }
+          });
         } else {
-          navigate(`/pessoas/detalhe/${result}`);
+          PessoasService.updateById(Number(id), {
+            id: Number(id),
+            ...dadosValidados,
+          }).then((result) => {
+            setIsLoading(false);
+            if (result instanceof Error) {
+              alert(result.message);
+            } else {
+              if (isSaveAndClose()) {
+                navigate("/pessoas");
+              }
+            }
+          });
         }
+      })
+      .catch((errors: yup.ValidationError) => {
+        const validationErrors: { [key: string]: string } = {};
+        errors.inner.forEach((error) => {
+          if (!error.path) return;
+
+          validationErrors[error.path] = error.message;
+        });
+        formRef.current?.setErrors(validationErrors);
       });
-    } else {
-      PessoasService.updateById(Number(id), { id: Number(id), ...dados }).then(
-        (result) => {
-          setIsLoading(false);
-          if (result instanceof Error) {
-            alert(result.message);
-          }
-        }
-      );
-    }
   };
 
   const handleDelete = (id: number) => {
@@ -88,7 +126,7 @@ export const DetalheDePessoas: React.FC = () => {
           mostrarBotaoSalvarEVoltar
           mostrarBotaoApagar={id !== "nova"}
           mostrarBotaoNovo={id !== "nova"}
-          aoClicarEmSalvar={() => formRef.current?.submitForm()}
+          aoClicarEmSalvar={save}
           aoClicarEmApagar={() => handleDelete(Number(id))}
           aoClicarEmNovo={() => {
             navigate("/pessoas/detalhe/nova");
@@ -96,11 +134,11 @@ export const DetalheDePessoas: React.FC = () => {
           aoClicarEmVoltar={() => {
             navigate("/pessoas");
           }}
-          aoClicarEmSalvarEFechar={() => formRef.current?.submitForm()}
+          aoClicarEmSalvarEFechar={saveAndClose}
         />
       }
     >
-      <Form ref={formRef} onSubmit={handleSave}>
+      <VForm ref={formRef} onSubmit={handleSave}>
         <Box
           margin={1}
           display="flex"
@@ -150,7 +188,10 @@ export const DetalheDePessoas: React.FC = () => {
             </Grid>
           </Grid>
         </Box>
-      </Form>
+      </VForm>
     </LayoutBaseDePagina>
   );
 };
+function objectSchema(arg0: {}): yup.Schema<IFormData, any, any, ""> {
+  throw new Error("Function not implemented.");
+}
