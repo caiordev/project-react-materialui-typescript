@@ -10,6 +10,7 @@ import { PessoasService } from "../../shared/services/api/pessoas/PessoasService
 import * as yup from "yup";
 import { number, object, ObjectSchema, string } from "yup";
 import { IVFormErrors } from "../../shared/forms/IVFormErrors";
+import { AutoCompleteCidade } from "./components/AutoCompleteCidade";
 
 interface IFormData {
   email: string;
@@ -17,7 +18,7 @@ interface IFormData {
   nomeCompleto: string;
 }
 
-const formValidationSchema: ObjectSchema<IFormData> = object({
+const formValidationSchema: yup.ObjectSchema<IFormData> = yup.object({
   nomeCompleto: yup.string().required().min(3),
   email: yup.string().required().email(),
   cidadeId: yup.number().required(),
@@ -52,7 +53,7 @@ export const DetalheDePessoas: React.FC = () => {
       formRef.current?.setData({
         nomeCompleto: "",
         email: "",
-        cidadeId: "",
+        cidadeId: undefined,
       });
     }
   }, [id]);
@@ -164,15 +165,6 @@ export const DetalheDePessoas: React.FC = () => {
                   disabled={isLoading}
                 />
               </Grid>
-              <Grid item xs={12} sm={12} md={6} lg={4} xl={2}>
-                <VTextField
-                  type="date"
-                  fullWidth
-                  label="Data"
-                  name="data"
-                  disabled={isLoading}
-                />
-              </Grid>
             </Grid>
             <Grid container item direction="row">
               <Grid item xs={8} sm={12} md={6} lg={4} xl={2}>
@@ -186,12 +178,7 @@ export const DetalheDePessoas: React.FC = () => {
             </Grid>
             <Grid container item direction="row">
               <Grid item xs={8} sm={12} md={6} lg={4} xl={2}>
-                <VTextField
-                  fullWidth
-                  label="Cidade"
-                  name="cidadeId"
-                  disabled={isLoading}
-                />
+                <AutoCompleteCidade isExternalLoading={isLoading} />
               </Grid>
             </Grid>
           </Grid>
