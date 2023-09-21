@@ -48,5 +48,11 @@
       "cidadeId": "1",
       "id": 11
     }
+  ],
+  "cidades": [
+    {
+      "nome": "Salvador",
+      "id": 1
+    }
   ]
 }
