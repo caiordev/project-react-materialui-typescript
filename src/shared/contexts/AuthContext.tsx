@@ -1,6 +1,7 @@
 import {
   createContext,
   useCallback,
+  useContext,
   useEffect,
   useMemo,
   useState,
@@ -39,9 +40,9 @@ export const AuthProvider: React.FC<IAuthProviderProps> = ({ children }) => {
     } else {
       localStorage.setItem(
         "APP_ACCESS_TOKEN",
-        JSON.stringify(result.acessToken)
+        JSON.stringify(result.accessToken)
       );
-      setAccessToken(result.acessToken);
+      setAccessToken(result.accessToken);
     }
   }, []);
   const handleLogout = useCallback(() => {
@@ -59,3 +60,5 @@ export const AuthProvider: React.FC<IAuthProviderProps> = ({ children }) => {
     </AuthContext.Provider>
   );
 };
+
+export const useAuthContext = () => useContext(AuthContext);
